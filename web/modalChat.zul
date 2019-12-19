@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?link rel="stylesheet" type="text/css"
+    href="/bootstrap3/css/bootstrap.css" ?>
+    <?link rel="stylesheet" type="text/css"
+    href="/bootstrap3/js/bootstrap.min.js" ?>
+    
+    <?link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css"?>
+    <?link href="css/login.css" type="text/css" rel="stylesheet" media="screen,projection"/?>
+    
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:n="http://www.zkoss.org/2005/zk/native"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+<window id="chat" title="Bienvenido al soporte tecnico" maximizable="false" maximized="false" border="normal" width="350px" height="450px" closable="true">
+    <h:div class="panel panel-primary">
+                                    <h:div class="panel-heading">chat</h:div>
+                                    <h:div  class="panel-body">
+                                        <h:form id="formulario" class="form-horizontal" method="post">
+
+
+                                            <h:br/>
+
+                                            <h:div class="form-group">
+                                                <h:div class="row">
+                                                    <h:div class="col-md-10 col-md-offset-1"> 
+
+                                                        <h:div id="chatArea" style="height:200px; border: 1px solid #CCCCCC; padding: 12px;  border-radius: 5px; overflow-x: hidden;">
+                                                        </h:div>
+                                                    </h:div> 
+                                                </h:div>
+                                            </h:div>
+
+                                            <h:div class="col-md-10">
+                                                <h:div class="form-group">
+                                                    <h:input id="mensaje" name="mensaje"  maxlength="250" type="text" placeholder="Ingrese su consulta" class="form-control"/>  
+                                                </h:div>
+                                            </h:div>
+
+                                            <h:div class="col-md-2">
+                                                <h:div class="form-group">
+                                                    <button id="enviar" class="btn btn-primary btn-sm">Enviar></button>
+                                                </h:div>
+                                            </h:div>
+<button id="btnCerrar" class="btn btn-primary btn-sm" label="Cerrar Chat">
+                <attribute name="onClick">
+                    <![CDATA[
+                        chat.detach();
+                    ]]>
+                </attribute>
+            </button>
+
+
+
+                                        </h:form>
+                                    </h:div>
+                                </h:div>
+                                
+	</window>
+</zk>

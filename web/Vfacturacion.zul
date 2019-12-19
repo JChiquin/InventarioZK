@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/css/bootstrap.css" ?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/js/bootstrap.min.js" ?>
+    
+<?link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css"?>
+<?link href="css/login.css" type="text/css" rel="stylesheet" media="screen,projection"/?>
+
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./vfactu"?>
+    
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xmlns:h="http://www.w3.org/1999/xhtml">
+    <zscript>         <![CDATA[
+    import DTO.*;
+                        
+                        Cliente cli = new Cliente();
+                        List vendedores = new ArrayList();
+                        List detalles = new ArrayList();
+                        Factura fact = new Factura();
+                        fact.cliente=cli;
+                        
+                        ]]>
+    </zscript>
+                        
+    <h:div class="container" id="vfactu">
+        <h:div class="panel panel-default">
+            <h:div class="panel-heading">
+                <h:h4>
+                    <h:i class='glyphicon glyphicon-edit'></h:i> Nueva Factura</h:h4>
+            </h:div>
+            <h:div class="panel-body">
+                <h:form class="form-horizontal" role="form" id="datos_factura">
+                    <h:div class="form-group row">
+                        <h:label for="cedula" class="col-md-1 control-label">Cliente</h:label>
+                        <h:div class="col-md-2">
+                            <textbox type="text" class="form-control input-sm" id="cedula1"   placeholder="Ingrese la cedula" />
+                        </h:div>
+                        <h:div class="col-md-1">
+                            <button type="button" class="btn btn-default btn-sm glyphicon glyphicon-search">Buscar
+                                <attribute name="onClick">{
+                                    <![CDATA[
+                                        cli=servicio.buscarClientePorCedula(cedula1.value);
+                                        if(cli==null)
+                                        alert("Cliente no registrado");
+                                        binder.loadAll();
+                                   ]]>
+                                    }</attribute>
+                            </button>
+                        </h:div>
+                        <h:label for="nombre_cliente" class="col-md-1 control-label">Nombre</h:label>
+                        <h:div class="col-md-3">
+                            <textbox readonly="true" type="text" class="form-control input-sm" id="nombre_cliente" placeholder="cliente" value="@{cli.nombreCompleto}"/>
+                        </h:div>
+                        <h:label for="tel1" class="col-md-1 control-label">Teléfono</h:label>
+                        <h:div class="col-md-2">
+                            <textbox readonly="true" type="text" class="form-control input-sm" id="tel1" placeholder="Teléfono" value="@{cli.telefono}"/>
+                        </h:div>
+                    </h:div>
+                    <h:div class="form-group row">
+                        <h:label for="empresa" class="col-md-1 control-label">Vendedor</h:label>
+                        <h:div class="col-md-3">
+                            <combobox>
+                                <comboitem label=""/>
+                            </combobox>
+                        </h:div>
+                        <h:label for="tel2" class="col-md-1 control-label">Fecha</h:label>
+                        <h:div class="col-md-2">
+                            <datebox  id="fecha"/>
+                        </h:div>
+                        <h:label for="email" class="col-md-1 control-label">Pago</h:label>
+                        <h:div class="col-md-3">
+                            <combobox>
+                                <comboitem value="1" label="Efectivo"/>
+                                <comboitem value="2" label="Cheque"/>
+                                <comboitem value="3" label="Transferencia bancaria"/>
+                                <comboitem value="4" label="Crédito"/>
+                            </combobox>
+                        </h:div>
+                    </h:div>
+                    <h:div class="col-md-12">
+                        <h:div class="pull-right">
+                            <button  class="btn btn-sm btn-default glyphicon glyphicon-search" >
+                                Agregar productos
+                                <attribute name="onClick">{
+                                    Window win = (Window) Executions.createComponents(
+                                    "modalFacturas.zul", null, null);
+                                    win.doModal();
+                                    detalles.addAll(win.getAttribute("objeto"));
+                                    fact.getLista_detalle().addAll(detalles);
+                                    binder.loadAll();
+                                    }</attribute>
+                            </button>
+                            <button  class="btn btn-sm btn-default glyphicon glyphicon-user" >
+                                Nuevo cliente
+                                <attribute name="onClick">{
+                                    <![CDATA[
+
+                                   Object objeto = new DTO.Cliente();
+                                   Map parametros = new HashMap();
+                                   parametros.put("modo","I");
+                                   parametros.put("objeto",objeto);
+                                   Window window = (Window)Executions.createComponents("modalCliente.zul", null,parametros);
+                                   window.doModal();
+                                   if (window.getAttribute("accion")!=null && window.getAttribute("accion").equals("A"))
+                                           {
+                                               servicio.guardarCliente(objeto);
+                                           }
+                                   ]]>
+                                    }</attribute>
+                            </button>
+
+                            <h:button type="submit" class="btn btn-default">
+                                <h:span class="glyphicon glyphicon-print"></h:span> Imprimir
+                            </h:button>
+                        </h:div>	
+                    </h:div>
+                </h:form>	
+                <h:br/>
+                <h:br/>
+                <h:br/>
+
+                <listbox id="box"
+                         model="@{detalles}" 
+                         mold="paging" multiple="true"
+                         emptyMessage="No hay Productos registrados."
+                         pageSize="4"
+                >
+                    <listhead>
+                                
+                        <listheader label="Codigo" align="center" valign="middle" width=""/>
+                        <listheader label="Producto" align="center" valign="middle" width="" />
+                        <listheader label="Cantidad" align="center" valign="middle" width="" />
+                        <listheader label="Precio Unit" align="center" valign="middle" width="" />
+                        <listheader label="Precio Total" align="center" valign="middle" width="" />
+                    </listhead>
+                    <listitem  sclass="row-border item" self="@{each=objeto}" value="@{objeto}">
+                                    
+                        <listcell label="@{objeto.producto.codigo}"/>
+                        <listcell label="@{objeto.producto.nombre}"/>
+                        <listcell label="@{objeto.cantidad}"/>
+                        <listcell label="@{objeto.producto.precio_venta}"/>
+                        <listcell label="@{objeto.precioTotal}"/>
+                    </listitem>
+                </listbox> 	
+                <h:div class="row-fluid">
+                    <h:div class="col-md-2 col-md-offset-8">
+                        Subtotal
+                    </h:div>
+                    <h:div class="col-md-2">
+                        <label id="" value="@{fact.subTotal}"/>
+                    </h:div>		
+                </h:div>
+                <h:div class="row-fluid">
+                    <h:div class="col-md-2 col-md-offset-8">
+                        IVA 
+                    </h:div>
+                    <h:div class="col-md-2">
+                        <label id=""/>
+                    </h:div>		
+                </h:div>
+                <h:div class="row-fluid">
+                    <h:div class="col-md-2 col-md-offset-8">
+                        Total
+                    </h:div>
+                    <h:div class="col-md-2">
+                        <label id=""/>
+                    </h:div>		
+                </h:div>
+            </h:div>    
+        </h:div>		
+        
+    </h:div>
+</zk>

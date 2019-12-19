@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./editProducto"?>  
+<!--
+index.zul
+
+{{IS_NOTE
+	Purpose:
+		
+	Description:
+		
+	History:
+		Mon Jun 12 21:23:35     2006, Created by tomyeh
+		Fri May 01 04:36:35     2009, Modified by stera
+}}IS_NOTE
+
+Copyright (C) 2006 Potix Corporation. All Rights Reserved.
+
+{{IS_RIGHT
+}}IS_RIGHT
+--> <?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/css/bootstrap.css" ?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/js/bootstrap.min.js" ?>
+    
+<?link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css"?>
+<?link href="css/login.css" type="text/css" rel="stylesheet" media="screen,projection"/?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xmlns:h="http://www.w3.org/1999/xhtml">
+    
+    <zscript>
+        import DTO.Producto;
+    
+        DTO.Producto proEditarNuevo = arg.get("objeto");
+        char modo = arg.get("modo").charAt(0);
+        proEditarNuevo.estatus='A';
+    </zscript>    
+    <window id="editProducto" title= "${modo=='I'?'Agregar nuevo producto':'Editar producto'}" maximizable="false" maximized="false" border="normal" width="350px" height="500px" closable="true" action="show: slideDown;hide: slideUp">
+        <div align="center">
+             
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Codigo"  />
+                <textbox disabled="${modo=='E'}" id="codigo" constraint="no empty" value="@{proEditarNuevoNuevo.codigo}"/>
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Nombre" />
+                <textbox rows="3"  id="nombre"  value="@{proEditarNuevo.nombre}"/>
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Descripción"  />
+                <textbox rows="3"  id="descripcion"  value="@{proEditarNuevo.descripcion}" />
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Stock"  />
+                <textbox  id="stock"   value="@{proEditarNuevo.stock}"/>
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Costo unitario"  />
+                <textbox  id="costoU"  value="@{proEditarNuevo.precio_compra}" />
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Precio de venta"  />
+                <textbox  id="pvp"  value="@{proEditarNuevo.precio_venta}" />
+            </hlayout>
+            
+        </div>
+        
+        <separator bar="false"/>
+        <separator bar="true"/>
+        <separator bar="false"/>
+        
+        <div align="right">
+            <button id="btnBorrar" label="Borrar todo">
+                <attribute name="onClick">
+                    <![CDATA[
+                        codigo.value="";
+                        nombre.value="";
+                        descripcion.value="";
+                        stock.value="0";
+                        costoU.value="0";
+                        pvp.value="0";
+                    ]]>
+                </attribute>
+            </button>   
+            <button id="btnCerrar" label="Cerrar">
+                <attribute name="onClick">
+                    <![CDATA[
+                        editProducto.setAttribute("accion","C");
+                        editProducto.detach();
+                    ]]>
+                </attribute>
+            </button>
+            <button id="btnGuardar" label="${modo=='I'?'Guardar datos':'Actualizar datos'}">
+                <attribute name="onClick">{
+                    <![CDATA[
+                        editProducto.setAttribute("accion","A");
+                        editProducto.detach();   
+                        
+                    ]]>
+                    
+                    
+                    }</attribute>
+            </button>            
+        </div>
+    </window>
+</zk>

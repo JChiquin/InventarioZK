@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/css/bootstrap.css" ?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/js/bootstrap.min.js" ?>
+    
+<?link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css"?>
+<?link href="css/login.css" type="text/css" rel="stylesheet" media="screen,projection"/?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./vusu"?>  
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xmlns:h="http://www.w3.org/1999/xhtml">
+ 
+    <zscript>
+		<![CDATA[
+            import DTO.Usuario;
+			List usuarios = new ArrayList();
+                        List usuarios2 = new ArrayList();
+			void cargar()
+		  	{
+				usuarios = servicio.buscarUsuarioTodos();
+                                usuarios2=servicio.buscarUsuarioTodos();
+				binder.loadAll();
+		  	}
+			cargar();
+		]]>
+    </zscript>
+    <h:div class="container" id="vusu">
+        <h:div class="panel panel-default">
+            <h:div class="panel-heading">
+                <button zclass="btn-primary btn-sm pull-right glyphicon glyphicon-plus" label=" Nuevo Usuario" onClick="">
+                    <attribute name="onClick">{
+                         <![CDATA[
+                        
+                        Object objeto = new DTO.Usuario();
+                        Map parametros = new HashMap();
+                        parametros.put("modo","I");
+                        parametros.put("objeto",objeto);
+                        Window window = (Window)Executions.createComponents("modalUsuario.zul", null,parametros);
+                        window.doModal();
+                        if (window.getAttribute("accion")!=null && window.getAttribute("accion").equals("A"))
+                                {
+                                    servicio.guardarUsuario(objeto);
+                                    cargar();
+                                }
+                        ]]>
+                        }</attribute>
+                </button>
+			
+                <h:h4>
+                    <h:i class='glyphicon glyphicon-search'></h:i> Buscar Usuarios</h:h4>
+            </h:div>
+            <h:div class="panel-body">
+                <h:form class="form-horizontal" role="form" id="datos_cotizacion">
+				
+                    <h:div class="form-group row">
+                        <h:label class="col-md-2 control-label">Usuario</h:label>
+                        <h:div class="col-md-5">
+                            
+                            <textbox placeholder="Usuario o nombre..." id="txtUsuario" class="form-control">
+                                <attribute name="onChanging">
+                                <![CDATA[
+                        
+                          if (event.value != null && !event.value.trim().equals(""))
+				{
+                                    usuarios.clear();
+                                    for (DTO.Usuario usu : usuarios2)
+                                            if (usu.nombre.toLowerCase().contains(event.value.trim().toLowerCase()) || usu.nombre_usuario.toLowerCase().contains(event.value.trim().toLowerCase()) )
+                                                    usuarios.add(usu);
+                                    binder.loadAll();
+                            }
+                        else
+                                cargar();
+                        ]]>
+                                </attribute>
+                            </textbox>
+                        </h:div>
+                        <h:div class="col-md-3">
+                            <button type="button" class="btn btn-default glyphicon glyphicon-search" >
+                                Buscar
+                            </button>
+                            <h:span id="loader"></h:span>
+                        </h:div>
+                    </h:div>
+                </h:form>
+            </h:div>
+        </h:div>
+               
+        <listbox id="box"
+                 model="@{usuarios}" 
+                 mold="paging" multiple="true"
+                 emptyMessage="No hay usuarios registrados."
+                 pageSize="4"
+        >
+            <listhead>
+                <listheader label="Usuario" align="center" valign="middle" width="" sort="auto(nombre_usuario)"/>
+                <listheader label="Contraseña" align="center" valign="middle" width="" sort="auto(password)"/>                    
+                <listheader label="Cédula" align="center" valign="middle" width="" sort="auto(cedula)"/>
+                <listheader label="Nombre" align="center" valign="middle" width="" sort="auto(nombre)"/>
+                <listheader label="Apellido" align="center" valign="middle" width="" sort="auto(apellido)" />
+                <listheader label="Correo" align="center" valign="middle" width="" sort="auto(email)"/>
+                <listheader label="Tipo Usuario" align="center" valign="middle" width="" sort="auto(tipo_usuario)"/>
+                <listheader label="Opcs." align="center" valign="middle" width="" />
+            </listhead>
+            <listitem  sclass="row-border item" self="@{each=objeto}" value="@{objeto}">
+                <listcell label="@{objeto.nombre_usuario}"/>
+                <listcell label="@{objeto.password}"/>                    
+                <listcell label="@{objeto.cedula}"/>
+                <listcell label="@{objeto.nombre}"/>
+                <listcell label="@{objeto.apellido}"/>
+                <listcell label="@{objeto.email}"/>
+                <listcell label="@{objeto.tipo_usuario}"/>
+                <listcell>
+                    <h:span class="pull-right">
+                        <a href="#" class='btn btn-default' tooltiptext="Modificar">
+                            <h:i class="glyphicon glyphicon-edit"></h:i>
+                            <attribute name="onClick">
+                                <![CDATA[
+                                Object objeto = ((Listitem) self.getParent().getParent().getParent()).getValue();
+                                Map parametros = new HashMap();
+                                parametros.put("modo","E");
+                                parametros.put("objeto",objeto);
+                                Window window = (Window)Executions.createComponents("modalUsuario.zul", null,parametros);
+                                window.doModal();
+                                if (window.getAttribute("accion")!=null && window.getAttribute("accion").equals("A"))
+                                {
+                                    servicio.guardarUsuario(objeto);
+                                    cargar();
+                                }
+                                
+                                ]]>
+                            </attribute>
+                        </a> 
+                                           
+                        <a href="#" class='btn btn-default' tooltiptext="Eliminar">
+                            <h:i class="glyphicon glyphicon-trash"></h:i> 
+                            <attribute name="onClick">
+                                <![CDATA[
+                                    Object objeto = ((Listitem) self.getParent().getParent().getParent()).getValue();
+                                    if (Messagebox.show("Está seguro que desea borrar a\n"+objeto.cedula,"Confirmación", Messagebox.OK | Messagebox.CANCEL,  Messagebox.QUESTION)== Messagebox.OK)
+                                    { 
+                                    servicio.eliminarUsuario(objeto);
+                                    cargar();
+                                    }
+                                ]]>
+                            </attribute>
+                        </a>
+                    </h:span>
+                </listcell>
+            </listitem>
+        </listbox> 	
+    </h:div>
+</zk>

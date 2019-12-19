@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/css/bootstrap.css" ?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/js/bootstrap.min.js" ?>
+    
+<?link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css"?>
+<?link href="css/login.css" type="text/css" rel="stylesheet" media="screen,projection"/?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./vfac"?>  
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xmlns:h="http://www.w3.org/1999/xhtml">
+    <zscript>
+		<![CDATA[
+            import DTO.Factura;
+			List facturas = new ArrayList();
+                        List facturas2 = new ArrayList();
+			void cargar()
+		  	{
+				facturas = servicio.buscarFacturaTodos();
+                                facturas2 = servicio.buscarFacturaTodos();
+                                
+				binder.loadAll();
+                                
+		  	}
+			cargar();
+                        
+		]]>
+    </zscript>
+    <h:div class="container" id="vfac">
+        <h:div class="panel panel-default">
+            <h:div class="panel-heading">
+                <button zclass="btn-primary btn-sm pull-right glyphicon glyphicon-plus" label=" Nuevo Factura" onClick="">
+                    <attribute name="onClick">
+                         <![CDATA[
+                            irOpcion("/Vfacturacion.zul");
+                        ]]>
+                        </attribute>
+                </button>
+			
+                <h:h4>
+                    <h:i class='glyphicon glyphicon-search'></h:i> Buscar Facturas</h:h4>
+            </h:div>
+            <h:div class="panel-body">
+                <h:form class="form-horizontal" role="form" id="datos_cotizacion">
+				
+                    <h:div class="form-group row">
+                        <h:label class="col-md-2 control-label">Factura</h:label>
+                        <h:div class="col-md-5">
+                            
+                            <textbox placeholder="Nombre del cliente o # de factura" id="txtFactura" class="form-control">
+                                <attribute name="onChanging">
+                                <![CDATA[
+                        
+                          if (event.value != null && !event.value.trim().equals(""))
+				{
+                                    facturas.clear();
+                                    for (DTO.Factura fac : facturas2)
+                                            if (fac.getCliente().nombreCompleto().toLowerCase().contains(event.value.trim().toLowerCase()) || String.valueOf(fac.getNum_factura()).toLowerCase().contains(event.value.trim().toLowerCase()) )
+                                                    facturas.add(fac);
+                                    binder.loadAll();
+                            }
+                        else
+                                cargar();
+                        ]]>
+                                </attribute>
+                            </textbox>
+                        </h:div>
+                        <h:div class="col-md-3">
+                            <button type="button" class="btn btn-default glyphicon glyphicon-search" >
+                                Buscar
+                            </button>
+                            <h:span id="loader"></h:span>
+                        </h:div>
+                    </h:div>
+                </h:form>
+            </h:div>
+        </h:div>
+               
+        <listbox id="box"
+                 model="@{facturas}" 
+                 mold="paging" multiple="true"
+                 emptyMessage="No hay facturas registrados."
+                 pageSize="4"
+        >
+            <listhead>
+                                    
+                <listheader label="#" align="center" valign="middle" width="" sort="auto(cedula)"/>
+                <listheader label="Fecha" align="center" valign="middle" width="" sort="auto(nombre)"/>
+                <listheader label="Cliente" align="center" valign="middle" width="" sort="auto(apellido)" />
+                <listheader label="Vendedor" align="center" valign="middle" width="" sort="auto(telefono)"/>
+                <listheader label="Estado" align="center" valign="middle" width="" sort="auto(email)"/>
+                <listheader label="Total" align="center" valign="middle" width="" sort="auto(direccion)"/>
+                <listheader label="Opcs." align="center" valign="middle" width="" />
+            </listhead>
+            <listitem  sclass="row-border item" self="@{each=objeto}" value="@{objeto}">
+                                    
+                <listcell label="@{objeto.num_factura}" />
+                <listcell label="@{objeto.fecha_factura}"/>
+                <listcell label="@{objeto.cliente.nombreCompleto}"/>
+                <listcell label="@{objeto.usuario.nombreCompleto}"/>
+                <listcell>
+                     <attribute name="onCreate">
+                        {
+                         Label label = new Label();
+                         if(self.getParent().getValue().getEstatus()=='A'){
+                            label.setValue("Pagado");
+                            label.setZclass("label label-success");
+                         }else{
+                            label.setValue("Pendiente");
+                            label.setZclass("label label-warning");
+                         }
+                         label.setParent(self);
+                        }
+                    </attribute>
+                </listcell>
+                <listcell label="@{objeto.total_venta}"/>
+                <listcell>
+                    <h:span class="pull-right">
+                        <a href="#" class='btn btn-default' tooltiptext="Modificar">
+                            <h:i class="glyphicon glyphicon-edit"></h:i>
+                            <attribute name="onClick">
+                                <![CDATA[
+                                Object objeto = ((Listitem) self.getParent().getParent().getParent()).getValue();
+                                Map parametros = new HashMap();
+                                parametros.put("modo","E");
+                                parametros.put("objeto",objeto);
+                                Window window = (Window)Executions.createComponents("modalFacturas.zul", null,parametros);
+                                window.doModal();
+                                if (window.getAttribute("accion")!=null && window.getAttribute("accion").equals("A"))
+                                {
+                                    servicio.guardarFactura(objeto);
+                                    cargar();
+                                }
+                                ]]>
+                            </attribute>
+                        </a> 
+                                           
+                        <a href="#" class='btn btn-default' tooltiptext="Eliminar">
+                            <h:i class="glyphicon glyphicon-trash"></h:i> 
+                            <attribute name="onClick">
+                                <![CDATA[
+                                Object objeto = ((Listitem) self.getParent().getParent().getParent()).getValue();
+                                    if (Messagebox.show("Está seguro que desea borrar a\n"+objeto.num_factura,"Confirmación", Messagebox.OK | Messagebox.CANCEL,  Messagebox.QUESTION)== Messagebox.OK)
+                                    { 
+                                    servicio.eliminarFactura(objeto);
+                                    cargar();
+                                    }
+                                ]]>
+                            </attribute>
+                        </a>
+                    </h:span>
+                </listcell>
+            </listitem>
+        </listbox> 	
+    </h:div>
+</zk>

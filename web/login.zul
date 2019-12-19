@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?link rel="stylesheet" type="text/css"
+    href="/bootstrap3/css/bootstrap.css" ?>
+    <?link rel="stylesheet" type="text/css"
+    href="/bootstrap3/js/bootstrap.min.js" ?>
+    
+    <?link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css"?>
+    <?link href="css/login.css" type="text/css" rel="stylesheet" media="screen,projection"/?>
+    
+   
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./login"?>  
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:n="http://www.zkoss.org/2005/zk/native"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+        
+   
+  
+<window title="" width=""  height="" id="login" style="height: 100%;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(135deg, rgba(31,123,229,1) 0%, rgba(58,139,232,1) 47%, rgba(70,153,234,1) 92%, rgba(72,156,234,1) 100%);
+    background: url(img/login-bg.jpg) no-repeat center center fixed;
+    background-size: 100% 100%;">
+    <zscript>
+        <![CDATA[
+                    import DTO.Usuario;
+                    void login(){
+                        
+                        if(usu.value == "" || cont.value=="" )
+                        {
+                        alert("Los Campos no deben estar vacíos");
+                            }else
+                            {
+                            Usuario objuser=servicio.buscarUsuarioPorUsuario(usu.value);
+                            if(objuser!=null && objuser.getPassword().equals(cont.value))
+                            {
+                            usuario.estatus='y';
+                            alert("Iniciando sesión");
+                            binder.loadAll();
+                            Executions.sendRedirect("/");
+                            }
+                            else
+                            {
+                            alert("Datos erróneos");
+                            }
+                            }
+                           }     
+                        ]]>
+    </zscript>
+    
+    <h:meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+    <h:div class="container">
+        <h:div class="card card-container">
+            <h:img id="profile-img" class="profile-img-card" src="img/avatar_2x.png" />
+            <h:p id="profile-name" class="profile-name-card"></h:p>
+            <h:form  accept-charset="utf-8"  name="loginform" autocomplete="off" role="form" class="form-signin">
+                <h:span id="reauth-email" class="reauth-email"></h:span>
+                <textbox class="form-control"  value="" id="usu"  />
+                <textbox type="password" class="form-control"   value="" id="cont" onOK="login()"/>
+                <button zclass="btn btn-lg btn-success btn-block btn-signin" onClick="login()" id="submit">Iniciar Sesión
+                </button>
+            </h:form><!-- /form -->
+        </h:div><!-- /card-container -->
+    </h:div>
+    
+    </window>
+</zk>

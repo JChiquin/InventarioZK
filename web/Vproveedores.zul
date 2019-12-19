@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/css/bootstrap.css" ?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/js/bootstrap.min.js" ?>
+    
+<?link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css"?>
+<?link href="css/login.css" type="text/css" rel="stylesheet" media="screen,projection"/?>
+ <?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./vprov"?>  
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xmlns:h="http://www.w3.org/1999/xhtml">
+ 
+    <zscript>
+		<![CDATA[
+            import DTO.Proveedor;
+			List proveedores = new ArrayList();
+                        List proveedores2 = new ArrayList();
+			void cargar()
+		  	{
+				proveedores = servicio.buscarProveedoresTodos();
+                                proveedores2=servicio.buscarProveedoresTodos();
+                                
+				binder.loadAll();
+                                
+		  	}
+			cargar();
+		]]>
+    </zscript>
+    <h:div class="container" id="vprov">
+        <h:div class="panel panel-default">
+            <h:div class="panel-heading">
+                <button zclass="btn-primary btn-sm pull-right glyphicon glyphicon-plus" label=" Nuevo Proveedor" onClick="">
+                    <attribute name="onClick">{
+                         <![CDATA[
+                        
+                        Object objeto = new DTO.Proveedor();
+                        Map parametros = new HashMap();
+                        parametros.put("modo","I");
+                        parametros.put("objeto",objeto);
+                        Window window = (Window)Executions.createComponents("modalProveedor.zul", null,parametros);
+                        window.doModal();
+                        if (window.getAttribute("accion")!=null && window.getAttribute("accion").equals("A"))
+                                {
+                                    servicio.guardarProveedor(objeto);
+                                    cargar();
+                                }
+                        ]]>
+                        }</attribute>
+                </button>
+			
+                <h:h4>
+                    <h:i class='glyphicon glyphicon-search'></h:i> Buscar Proveedores</h:h4>
+            </h:div>
+            <h:div class="panel-body">
+                <h:form class="form-horizontal" role="form" id="datos_cotizacion">
+				
+                    <h:div class="form-group row">
+                        <h:label class="col-md-2 control-label">Proveedor</h:label>
+                        <h:div class="col-md-5">
+                            
+                            <textbox placeholder="ID o nombre..." id="txtProveedor" class="form-control">
+                                <attribute name="onChanging">
+                                <![CDATA[
+                        
+                          if (event.value != null && !event.value.trim().equals(""))
+				{
+                                    proveedores.clear();
+                                    for (DTO.Proveedor pro : proveedores2)
+                                            if (pro.nombre.toLowerCase().contains(event.value.trim().toLowerCase()) || String.valueOf(pro.id_proveedor).toLowerCase().contains(event.value.trim().toLowerCase()) )
+                                                    proveedores.add(pro);
+                                    binder.loadAll();
+                            }
+                        else
+                                cargar();
+                        ]]>
+                                </attribute>
+                            </textbox>
+                        </h:div>
+                        <h:div class="col-md-3">
+                            <button type="button" class="btn btn-default glyphicon glyphicon-search" >
+                                Buscar
+                            </button>
+                            <h:span id="loader"></h:span>
+                        </h:div>
+                    </h:div>
+                </h:form>
+            </h:div>
+        </h:div>
+               
+        <listbox id="box"
+                 model="@{proveedores}" 
+                 mold="paging" multiple="true"
+                 emptyMessage="No hay proveedores registrados."
+                 pageSize="4"
+        >
+            <listhead>
+                <listheader label="ID" align="center" valign="middle" width="" sort="auto(id_proveedor)"/>
+                <listheader label="RIF" align="center" valign="middle" width="" sort="auto(rif)"/>
+                <listheader label="Nombre" align="center" valign="middle" width="" sort="auto(nombre)" />
+                <listheader label="Teléfono" align="center" valign="middle" width="" sort="auto(telefono)"/>
+                <listheader label="Correo" align="center" valign="middle" width="" sort="auto(email)"/>
+                <listheader label="Dirección" align="center" valign="middle" width="" sort="auto(direccion)"/>
+                <listheader label="Opcs." align="center" valign="middle" width="" />
+            </listhead>
+            <listitem  sclass="row-border item" self="@{each=objeto}" value="@{objeto}">
+                <listcell  label="@{objeto.id_proveedor}"/>
+                <listcell label="@{objeto.rif}"/>
+                <listcell label="@{objeto.nombre}"/>
+                <listcell label="@{objeto.telefono}"/>
+                <listcell label="@{objeto.email}"/>
+                <listcell label="@{objeto.direccion}"/>
+                <listcell>
+                    <h:span class="pull-right">
+                        <a href="#" class='btn btn-default' tooltiptext="Modificar">
+                            <h:i class="glyphicon glyphicon-edit"></h:i>
+                            <attribute name="onClick">
+                                <![CDATA[
+                                Object objeto = ((Listitem) self.getParent().getParent().getParent()).getValue();
+                                Map parametros = new HashMap();
+                                parametros.put("modo","E");
+                                parametros.put("objeto",objeto);
+                                Window window = (Window)Executions.createComponents("modalProveedor.zul", null,parametros);
+                                window.doModal();
+                                if (window.getAttribute("accion")!=null && window.getAttribute("accion").equals("A"))
+                                {
+                                    servicio.guardarProveedor(objeto);
+                                    cargar();
+                                }
+                                
+                                ]]>
+                            </attribute>
+                        </a> 
+                                           
+                        <a href="#" class='btn btn-default' tooltiptext="Eliminar">
+                            <h:i class="glyphicon glyphicon-trash"></h:i> 
+                            <attribute name="onClick">
+                                <![CDATA[
+                                Object objeto = ((Listitem) self.getParent().getParent().getParent()).getValue();
+                                    if (Messagebox.show("Está seguro que desea borrar a\n"+objeto.nombre,"Confirmación", Messagebox.OK | Messagebox.CANCEL,  Messagebox.QUESTION)== Messagebox.OK)
+                                    { 
+                                    servicio.eliminarProveedor(objeto);
+                                    cargar();
+                                    }
+                                ]]>
+                            </attribute>
+                        </a>
+                    </h:span>
+                </listcell>
+            </listitem>
+        </listbox> 	
+    </h:div>
+</zk>

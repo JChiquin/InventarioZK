@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/css/bootstrap.css" ?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/js/bootstrap.min.js" ?>
+    
+<?link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css"?>
+<?link href="css/login.css" type="text/css" rel="stylesheet" media="screen,projection"/?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit"?>   
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xmlns:h="http://www.w3.org/1999/xhtml">
+  
+    
+    <zscript>
+		<![CDATA[
+			void irOpcion(String opcion) {
+				targetArea.getChildren().clear();
+				Map parametros = new HashMap();
+				if (self instanceof Menuitem)
+				{
+					//parametros.put("permisos", servicioAdministrarConfiguracion.buscarPermisosPorVentanaRol(self.label, usuario.rolSistema));
+				}
+				
+				Component component = Executions.createComponents(opcion,targetArea,parametros);
+				component.setParent(targetArea);		
+			}
+			
+			void irOpcion(String opcion, Map atributos) {
+				targetArea.getChildren().clear();
+				if (self instanceof Menuitem)
+				{
+					//atributos.put("permisos", servicioAdministrarConfiguracion.buscarPermisosPorVentanaRol(self.label, usuario.rolSistema));
+				}
+				Component component = Executions.createComponents(opcion,targetArea,atributos);
+				component.setParent(targetArea);		
+			}
+			
+			List listaMenusVer;
+			if (usuario != null)
+			{
+				//listaMenusVer = servicioAdministrarConfiguracion.buscarPermisoMenusPorRol(usuario.rolSistema);
+			}
+		]]>
+    </zscript>
+    
+    <div if="${usuario.estatus=='x'}">
+        <include src="/login.zul"/>
+        
+    </div>    
+    <div if="${usuario.estatus=='y'}">
+    <h:nav class="navbar navbar-inverse ">
+        <h:div class="container-fluid">
+      
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <h:div class="navbar-header">
+                <h:button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <h:span class="sr-only">Toggle navigation</h:span>
+                    <h:span class="icon-bar"></h:span>
+                    <h:span class="icon-bar"></h:span>
+                    <h:span class="icon-bar"></h:span>
+                </h:button>
+                <h:a class="navbar-brand" href="#">InventarioZK</h:a>
+            </h:div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <h:div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <h:ul class="nav navbar-nav">
+                    <h:li class="">
+                        <a href="">
+                            <h:i class='glyphicon glyphicon-list-alt'></h:i> Facturas
+                            <attribute name="onClick">
+		    <![CDATA[
+			{
+				irOpcion("/Vfacturas.zul");
+                         }
+                           ]]> 
+                            </attribute> 
+                        </a>
+                    </h:li>
+                    <h:li class="">
+                        <a href="">
+                            <h:i class='glyphicon glyphicon-barcode'></h:i> Productos
+                            <attribute name="onClick">
+		    <![CDATA[
+			{
+				irOpcion("/Vproductos.zul");
+                         }
+                           ]]> 
+                            </attribute> 
+        
+                        </a>
+                    </h:li>
+                    <h:li class="">
+                        <a href="">
+                            <h:i class='glyphicon glyphicon-user'></h:i> Clientes
+                            <attribute name="onClick">
+		    <![CDATA[
+			{
+				irOpcion("/Vcliente.zul");
+                         }
+                           ]]> 
+                            </attribute>
+                        
+                        </a>
+                    </h:li>
+                    <h:li class="">
+                        <a href="">
+                            <h:i class='glyphicon glyphicon-briefcase'></h:i> Proveedores
+                            <attribute name="onClick">
+		    <![CDATA[
+			{
+				irOpcion("/Vproveedores.zul");
+                         }
+                           ]]> 
+                            </attribute>
+                        </a>
+                    </h:li>
+                    <h:li class="">
+                        <a href="">
+                            <h:i  class='glyphicon glyphicon-lock'></h:i> Usuarios
+                            <attribute name="onClick">
+		    <![CDATA[
+			{
+				irOpcion("/Vusuarios.zul");
+                         }
+                           ]]> 
+                            </attribute>
+                        
+                        </a>
+                    </h:li>
+                    <h:li class="">
+                        <a href="">
+                            <h:i  class='glyphicon glyphicon-cog'></h:i> Configuración
+                            <attribute name="onClick">
+		    <![CDATA[
+			{
+				irOpcion("/Vperfil.zul");
+                         }
+                           ]]> 
+                            </attribute>
+                        
+                        </a>
+                    </h:li>
+                </h:ul>
+                <h:ul class="nav navbar-nav navbar-right">
+                    <h:li>
+                        <a href="" target='_blank'>
+                            <h:i class='glyphicon glyphicon-envelope'></h:i>Chat_@
+                            <attribute name="onClick">{
+                                final Window win = (Window) Executions.createComponents(
+                                "modalChat.zul", null, null);
+                                win.doModal();
+                                }</attribute>
+                        </a>
+                    </h:li>
+                    <h:li>
+                        <a>
+                            <h:i class='glyphicon glyphicon-off'></h:i> Salir
+                            <attribute name="onClick">{
+                                <![CDATA[
+                                usuario.estatus='x';
+                                alert("Cerrando sesión");
+                                binder.loadAll();
+                                Executions.sendRedirect("/");
+                                ]]> }</attribute>
+                        </a>
+                    </h:li>
+                </h:ul>
+            </h:div><!-- /.navbar-collapse -->
+        </h:div><!-- /.container-fluid -->
+    </h:nav>
+    <window id="targetArea"  width="" height="" >
+        <attribute name="onCreate">
+            {
+            irOpcion("/Vfacturas.zul");
+            }
+        </attribute>
+    </window>
+    <h:div class="navbar navbar-inverse navbar-fixed-bottom">
+        <h:div class="container">
+            <h:p class="navbar-text pull-left">2018
+                <h:a href="" target="_blank" style="color: #ecf0f1">CHORROSCOS Technology Group. Sitios Web y Sistemas</h:a>
+            </h:p>
+        </h:div>
+    </h:div>     
+    </div>
+</zk>

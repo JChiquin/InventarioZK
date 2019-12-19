@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/css/bootstrap.css" ?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/js/bootstrap.min.js" ?>
+    
+<?link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css"?>
+<?link href="css/login.css" type="text/css" rel="stylesheet" media="screen,projection"/?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./vprod"?>  
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xmlns:h="http://www.w3.org/1999/xhtml">
+    <zscript>
+		<![CDATA[
+            import DTO.Producto;
+			List productos = new ArrayList();
+                        List productos2 = new ArrayList();
+			void cargar()
+		  	{
+				productos = servicio.buscarProductoTodos();
+                                productos2=servicio.buscarProductoTodos();
+                                
+				binder.loadAll();
+                                
+		  	}
+			cargar();
+		]]>
+    </zscript>
+    <h:div class="container" id="vprod">
+        <h:div class="panel panel-default">
+            <h:div class="panel-heading">
+                <button zclass="btn-primary btn-sm pull-right glyphicon glyphicon-plus" label=" Nuevo Producto" onClick="">
+                    <attribute name="onClick">{
+                         <![CDATA[
+                        
+                        Object objeto = new DTO.Producto();
+                        Map parametros = new HashMap();
+                        parametros.put("modo","I");
+                        parametros.put("objeto",objeto);
+                        Window window = (Window)Executions.createComponents("modalProducto.zul", null,parametros);
+                        window.doModal();
+                        if (window.getAttribute("accion")!=null && window.getAttribute("accion").equals("A"))
+                                {
+                                    servicio.guardarProducto(objeto);
+                                    cargar();
+                                }
+                        ]]>
+                        }</attribute>
+                </button>
+			
+                <h:h4>
+                    <h:i class='glyphicon glyphicon-search'></h:i> Buscar Productos</h:h4>
+            </h:div>
+            <h:div class="panel-body">
+                <h:form class="form-horizontal" role="form" id="datos_cotizacion">
+				
+                    <h:div class="form-group row">
+                        <h:label class="col-md-2 control-label">Producto</h:label>
+                        <h:div class="col-md-5">
+                            
+                            <textbox placeholder="Codigo o nombre..." id="txtProducto" class="form-control">
+                                <attribute name="onChanging">
+                                <![CDATA[
+                        
+                          if (event.value != null && !event.value.trim().equals(""))
+				{
+                                    productos.clear();
+                                    for (DTO.Producto pro : productos2)
+                                            if (pro.getNombre().toLowerCase().contains(event.value.trim().toLowerCase()) || pro.getCodigo().toLowerCase().contains(event.value.trim().toLowerCase()) )
+                                                    productos.add(pro);
+                                    binder.loadAll();
+                            }
+                        else
+                                cargar();
+                        ]]>
+                                </attribute>
+                            </textbox>
+                        </h:div>
+                        <h:div class="col-md-3">
+                            <button type="button" class="btn btn-default glyphicon glyphicon-search" >
+                                Buscar
+                            </button>
+                            <h:span id="loader"></h:span>
+                        </h:div>
+                    </h:div>
+                </h:form>
+            </h:div>
+        </h:div>
+               
+        <listbox id="box"
+                 model="@{productos}" 
+                 mold="paging" multiple="true"
+                 emptyMessage="No hay Productos registrados."
+                 pageSize="4"
+        >
+            <listhead>
+                                    
+                <listheader label="ID" align="center" valign="middle" width="" sort="auto(id_producto)"/>
+                <listheader label="Codigo" align="center" valign="middle" width="" sort="auto(codigo)"/>
+                <listheader label="Nombre" align="center" valign="middle" width="" sort="auto(nombre)" />
+                <listheader label="Descripcion" align="center" valign="middle" width="" sort="auto(descripcion)"/>
+                <listheader label="Stock" align="center" valign="middle" width="" sort="auto(stock)"/>
+                <listheader label="Precio Compra" align="center" valign="middle" width="" sort="auto(precio_compra)"/>
+                <listheader label="Precio Venta" align="center" valign="middle" width="" sort="auto(precio_venta)"/>
+                <listheader label="Opcs." align="center" valign="middle" width="" />
+            </listhead>
+            <listitem  sclass="row-border item" self="@{each=objeto}" value="@{objeto}">
+                                    
+                <listcell label="@{objeto.id_producto}" />
+                <listcell label="@{objeto.codigo}"/>
+                <listcell label="@{objeto.nombre}"/>
+                <listcell label="@{objeto.descripcion}"/>
+                <listcell label="@{objeto.stock}"/>
+                <listcell label="@{objeto.precio_compra}"/>
+                <listcell label="@{objeto.precio_venta}"/>
+                <listcell>
+                    <h:span class="pull-right">
+                        <a href="#" class='btn btn-default' tooltiptext="Modificar">
+                            <h:i class="glyphicon glyphicon-edit"></h:i>
+                            <attribute name="onClick">
+                                <![CDATA[
+                                
+                                Object objeto = ((Listitem) self.getParent().getParent().getParent()).getValue();
+                                Map parametros = new HashMap();
+           
+                                parametros.put("objeto",objeto);
+                                irOpcion("/VInventario.zul", parametros);
+                                
+                                ]]>
+                            </attribute>
+                        </a> 
+                                           
+                   
+                    </h:span>
+                </listcell>
+            </listitem>
+        </listbox> 	
+    </h:div>
+</zk>

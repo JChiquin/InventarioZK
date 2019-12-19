@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?link rel="stylesheet" type="text/css"
+    href="/bootstrap3/css/bootstrap.css" ?>
+    <?link rel="stylesheet" type="text/css"
+    href="/bootstrap3/js/bootstrap.min.js" ?>
+    
+    <?link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css"?>
+    <?link href="css/login.css" type="text/css" rel="stylesheet" media="screen,projection"/?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./editProveedor"?>  
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:n="http://www.zkoss.org/2005/zk/native"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+      <zscript>
+    import DTO.Proveedor;
+    
+    DTO.Proveedor proEditar = arg.get("objeto");
+    char modo = arg.get("modo").charAt(0);
+</zscript>    
+    <window id="editProveedor" title= "${modo=='I'?'Agregar nuevo proveedor':'Editar proveedor'}"  maximizable="false" maximized="false" border="normal" width="350px"  closable="true" action="show: slideDown;hide: slideUp">
+        <div align="center">
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Rif"  />
+                <textbox disabled="${modo=='E'}" id="rif" value="@{proEditar.rif}" constraint="no empty"/>
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Nombre"  />
+                <textbox id="nombre" value="@{proEditar.nombre}" constraint="no empty"/>
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Teléfono" />
+                <textbox id="telefono"  value="@{proEditar.telefono}"/>
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Dirección"  />
+                <textbox id="direccion"  rows="5" value="@{proEditar.direccion}"/>
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Correo"  />
+                <textbox id="correo" value="@{proEditar.email}"/>
+            </hlayout>
+        </div>
+        <separator bar="false"/>
+        <separator bar="true"/>
+        <separator bar="false"/>
+        <div align="right">
+            
+            <button id="btnCerrar" label="Cerrar">
+                <attribute name="onClick">
+                    <![CDATA[
+                        editProveedor.setAttribute("accion","C");
+                        editProveedor.detach();
+                    ]]>
+                </attribute>
+            </button>
+            <button id="btnGuardar" label="${modo=='I'?'Guardar datos':'Actualizar datos'}">
+                <attribute name="onClick">
+                    <![CDATA[
+                        editProveedor.setAttribute("accion","A");
+                        editProveedor.detach();   
+                    ]]>
+                </attribute>
+            </button>   
+               
+        </div>
+    </window>
+</zk>

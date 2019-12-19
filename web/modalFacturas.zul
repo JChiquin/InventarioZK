@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/css/bootstrap.css" ?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/js/bootstrap.min.js" ?>
+    
+<?link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css"?>
+<?link href="css/login.css" type="text/css" rel="stylesheet" media="screen,projection"/?>
+    <?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./prod"?>  
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xmlns:h="http://www.w3.org/1999/xhtml">
+    <window id="prod" title="agregar productos" maximizable="false" maximized="false" border="normal" width="" height="" closable="true">
+	<zscript>
+		<![CDATA[
+            import DTO.*;
+			List productos = new ArrayList();
+                        List productos2 = new ArrayList();
+                        List detalles = new ArrayList();
+                        int cantidad2;
+			void cargar()
+		  	{
+				productos = servicio.buscarProductoTodos();
+                                productos2=servicio.buscarProductoTodos();
+                                
+				binder.loadAll();
+                                
+		  	}
+			cargar();
+		]]>
+    </zscript>
+
+        <h:div class="container">
+            <h:div class="panel panel-default">
+                <h:div class="panel-heading">
+		    
+				
+                    <button zclass=" btn btn-outline-dark pull-right " label="Cerrar" onClick="">
+                        <attribute name="onClick">
+                    <![CDATA[
+                        prod.setAttribute("objeto",detalles);
+                        prod.detach();
+                    ]]>
+                        </attribute>
+                    </button>
+                    <h:h4> Buscar Productos</h:h4>	
+                </h:div>
+                <h:div class="panel-body">
+                    <h:form class="form-horizontal" role="form" id="productos_inventario">
+				
+                        <h:div class="form-group row">
+					
+                            <h:div class="col-md-8">
+                                <textbox type="text" class="form-control" id="qxc" placeholder="Nombre del Producto" >
+                                    <attribute name="onChanging">
+                                <![CDATA[
+                        
+                          if (event.value != null && !event.value.trim().equals(""))
+				{
+                                    productos.clear();
+                                    for (DTO.Producto pro : productos2)
+                                            if (pro.getNombre().toLowerCase().contains(event.value.trim().toLowerCase()) || pro.getCodigo().toLowerCase().contains(event.value.trim().toLowerCase()) )
+                                                    productos.add(pro);
+                                    binder.loadAll();
+                            }
+                        else
+                                cargar();
+                        ]]>
+                                </attribute>
+                                    
+                                </textbox>
+                            </h:div>
+							
+							
+							
+                            <h:div class="col-md-4">
+                                <h:button type="button" class="btn btn-default" onclick='load(1);'>
+                                    <h:span class="glyphicon glyphicon-search" ></h:span> Buscar</h:button>
+                                <h:span id="loadessr"></h:span>
+                            </h:div>
+							
+                        </h:div>
+                                                
+                                                
+                        <listbox id="box"
+                                 model="@{productos}" 
+                                 mold="paging" multiple="true"
+                                 emptyMessage="No hay Productos registrados."
+                                 pageSize="4"
+                        >
+                            <listhead>
+                                
+                                <listheader label="Codigo" align="center" valign="middle" width="" sort="auto(codigo)"/>
+                                <listheader label="Producto" align="center" valign="middle" width="" sort="auto(nombre)" />
+                                <listheader label="Stock" align="center" valign="middle" width="" sort="auto(stock)"/>
+                                <listheader label="Cantidad" align="center" valign="middle" width="" />
+                                <listheader label="Precio Venta" align="center" valign="middle" width="" sort="auto(precio_venta)"/>
+                                <listheader label="Opcs." align="center" valign="middle" width="" />
+                            </listhead>
+                            <listitem  sclass="row-border item" self="@{each=objeto}" value="@{objeto}">
+                                    
+                                <listcell label="@{objeto.codigo}"/>
+                                <listcell label="@{objeto.nombre}"/>
+                                <listcell label="@{objeto.stock}"/>
+                                <listcell>
+                                    <spinner value="@{cantidad2}"  constraint="no negative, no zero"/>
+                                </listcell>
+                                <listcell label="@{objeto.precio_venta}"/>
+                                <listcell>
+                                        <button zclass="btn-primary btn-sm pull-center glyphicon glyphicon-plus" label="" onClick="">
+                                            <attribute name="onClick">{
+                                                Producto pro = self.getParent().getParent().getValue();
+                                                Detalle_Factura det = new Detalle_Factura(1,cantidad2,pro.precio_venta,'A');
+                                                det.producto=pro;
+                                                detalles.add(det);
+                                                }</attribute>
+                                        </button>
+                                </listcell>
+                            </listitem>
+                        </listbox> 	
+                    </h:form>
+                </h:div>
+            </h:div>
+        </h:div>
+    </window>
+</zk>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./editUsuario"?>  
+<zk xmlns="http://www.zkoss.org/2005/zul">
+      <zscript>
+    import DTO.Usuario;
+    
+    DTO.Usuario usuEditar = arg.get("objeto");
+    char modo = arg.get("modo").charAt(0);
+</zscript>    
+    <window id="editUsuario" title= "${modo=='I'?'Agregar nuevo usuario':'Editar usuario'}"  maximizable="false" maximized="false" border="normal" width="350px"  closable="true" action="show: slideDown;hide: slideUp">
+        <div align="center">
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Usuario"  />
+                <textbox disabled="${modo=='E'}" constraint="no empty" id="usuario" value="@{usuEditar.nombre_usuario}"/>
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Contraseña"  />
+                <textbox constraint="no empty" id="contrasena" value="@{usuEditar.password}"/>
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Cedula"  />
+                <textbox  id="cedula" value="@{usuEditar.cedula}" constraint="no empty"/>
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Nombre"  />
+                <textbox id="nombre" value="@{usuEditar.nombre}"  constraint="no empty"/>
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Apellido"  />
+                <textbox id="apellido" value="@{usuEditar.apellido}"/>
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Correo"  />
+                <textbox id="correo" value="@{usuEditar.email}"/>
+            </hlayout>
+            <hlayout style="margin-top:20px" width="100%"> 
+                <label value="Tipo de Usuario"  />
+                <spinner id="tipo"  value="@{usuEditar.tipo_usuario}" constraint="no negative, no zero"/>
+            </hlayout>
+        </div>
+        <separator bar="false"/>
+        <separator bar="true"/>
+        <separator bar="false"/>
+        <div align="right">
+            
+            <button id="btnCerrar" label="Cerrar">
+                <attribute name="onClick">
+                    <![CDATA[
+                        editUsuario.setAttribute("accion","C");
+                        editUsuario.detach();
+                    ]]>
+                </attribute>
+            </button>
+            <button id="btnGuardar" label="${modo=='I'?'Guardar datos':'Actualizar datos'}">
+                <attribute name="onClick">
+                    <![CDATA[
+                        editUsuario.setAttribute("accion","A");
+                        editUsuario.detach();   
+                    ]]>
+                </attribute>
+            </button>   
+               
+        </div>
+    </window>
+</zk>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/css/bootstrap.css" ?>
+<?link 
+    rel="stylesheet" type="text/css"
+    href="/bootstrap3/js/bootstrap.min.js" ?>
+    
+<?link rel="stylesheet" type="text/css" href="bootstrap3/css/bootstrap.min.css"?>
+<?link href="css/login.css" type="text/css" rel="stylesheet" media="screen,projection"/?>
+  
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./perfil2"?>
+        
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:n="http://www.zkoss.org/2005/zk/native"
+    xmlns:h="http://www.w3.org/1999/xhtml">
+  
+    <zscript>
+        <![CDATA[
+            import DTO.Perfil;
+            Perfil perfil = new Perfil();
+            
+         void cargar()
+         {
+         perfil = servicio.buscarPerfil();
+         binder.loadAll();
+         
+        }
+         cargar();
+            
+            ]]>
+        
+    </zscript>
+
+  
+    <h:div class="container" id="perfil2">
+        <h:div class="row">
+            <h:form method="post" id="perfil">
+                <h:div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 toppad" >
+
+
+                    <h:div class="panel panel-default">
+                        <h:div class="panel-heading">
+                            <h:h3 class="panel-title">
+                                <h:i class='glyphicon glyphicon-cog'></h:i> Configuración</h:h3>
+                        </h:div>
+                        <h:div class="panel-body">
+                            <h:div class="row">
+
+                                <h:div class="col-md-3 col-lg-3 " align="center"> 
+                                    <h:div id="load_img">
+                                        <h:img class="img-responsive" src="@{perfil.logo_url}" alt="Logo"/>
+
+                                    </h:div>
+                                    <h:br/>				
+                                    <h:div class="row">
+                                        <h:div class="col-md-12">
+                                            <h:div class="form-group">
+                                            </h:div>
+                                        </h:div>
+
+                                    </h:div>
+                                </h:div>
+                                <h:div class=" col-md-9 col-lg-9 " > 
+                                    <h:table class="table table-condensed">
+                                        <h:tbody >
+                                            <h:tr>
+                                                <h:td class='col-md-3'>Nombre de la empresa:</h:td>
+                                                <h:td>
+                                                    <textbox type="text" class="form-control input-sm" name="nombre_empresa" value="@{perfil.nombre}" />
+                                                </h:td>
+                                            </h:tr>
+                                            <h:tr>
+                                                <h:td>Teléfono:</h:td>
+                                                <h:td>
+                                                    <textbox type="text" class="form-control input-sm" name="telefono" value="@{perfil.tlfn}" />
+                                                </h:td>
+                                            </h:tr>
+                                            <h:tr>
+                                                <h:td>Correo electrónico:</h:td>
+                                                <h:td>
+                                                    <textbox type="email" class="form-control input-sm" name="email" value="@{perfil.email}" />
+                                                </h:td>
+                                            </h:tr>
+                                            <h:tr>
+                                                <h:td>IVA (%):</h:td>
+                                                <h:td>
+                                                    <textbox type="text" class="form-control input-sm"  name="impuesto" value="@{perfil.impuesto}" />
+                                                </h:td>
+                                            </h:tr>
+                                            <h:tr>
+                                                <h:td>Porcentaje de venta (%):</h:td>
+                                                <h:td>
+                                                    <textbox type="text" class="form-control input-sm"  name="porcentaje" value="@{perfil.porcentaje}" />
+                                                </h:td>
+                                            </h:tr>
+                                                
+                                            <h:tr>
+                                                <h:td>Dirección:</h:td>
+                                                <h:td>
+                                                    <textbox type="text" class="form-control input-sm" name="direccion" value="@{perfil.direccion}" />
+                                                </h:td>
+                                            </h:tr>
+                                               
+
+
+
+                                        </h:tbody>
+                                    </h:table>
+
+
+                                </h:div>
+                                <h:div class='col-md-12' id="resultados_ajax"></h:div><!-- Carga los datos ajax -->
+                            </h:div>
+                        </h:div>
+                        <h:div class="panel-footer text-center">
+
+
+                            <button label="Actualizar Datos" zclass="btn btn-sm btn-success" >
+                                
+                                <attribute name="onClick">
+                                    
+                                  <![CDATA[
+                                
+                        servicio.guardarPerfil(perfil);
+                                    alert("Actualización Realizada con éxito..!");
+                                     cargar();
+                            ]]> 
+                                   
+                                </attribute>
+                            
+                            </button>
+                        </h:div>
+
+                    </h:div>
+                    <h:br/>
+                    <h:br/>
+                </h:div>
+            </h:form>
+        </h:div>
+    </h:div>
+       
+</zk>
